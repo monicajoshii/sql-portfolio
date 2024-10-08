@@ -48,5 +48,20 @@ Solution: SELECT members.member_name,
           JOIN issued_status  ON members.member_id = issued_status.issued_member_id
           LEFT JOIN return_status ON issued_status.issued_id = return_status.issued_id
           WHERE return_status.issued_id IS NULL;
-Query 8:  Calculates the total rental price of books issued at each branch.
-Solution: 
+Query 8:  Calculates the total rental price of books by category.
+Solution: SELECT
+          books.category,
+          SUM(books.rental_price),
+          COUNT(*)
+          FROM books
+          JOIN issued_status ON issued_status.issued_book_isbn = books.isbn
+          GROUP BY category;
+Query 9:  Retrieve all books issued by a specific employee.
+Solution: SELECT * FROM issued_status
+          WHERE issued_emp_id = 'E101';
+Query 10: Calculate total fine collected in the library from overdue books. Assume fine of $1 per day overdue.
+Solution: SELECT 
+          SUM(DATEDIFF(return_status.return_date, issued_status.issued_date) - 30) * 1 AS TotalFine
+          FROM return_status
+          JOIN issued_status ON return_status.issued_id = issued_status.issued_id
+          WHERE DATEDIFF(return_status.return_date, issued_status.issued_date) > 30;
